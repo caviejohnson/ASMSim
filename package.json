@@ -1,0 +1,16 @@
+{
+  "name": "asmsim",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "javascript-binary-converter": "^1.0.2"
+  }
+}
