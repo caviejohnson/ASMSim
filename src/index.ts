@@ -26,7 +26,7 @@ const { values, positionals } = parseArgs({
 	allowPositionals: true,
 });
 
-enum TokenType {
+export enum TokenType {
 	Action = "Action",
 	Pointer = "Pointer",
 	Value = "Value",
@@ -42,23 +42,22 @@ function trustMeBro<T>(obj: any): obj is T {
 type Rulers = ">";
 const rulers: string[] = [">"] as const;
 
-class Token {
+export class Token {
 	constructor(
 		public type: TokenType,
 		public value: Actions | Rulers | number
-	) {}
+	) { }
 
 	toString() {
-		return `${chalk.green("{")} ${chalk.yellow("Type:")} ${this.type}${
-			this.value === null
-				? ""
-				: ", " + chalk.yellow("Value: ") + this.value
-		} ${chalk.green("}")}`;
+		return `${chalk.green("{")} ${chalk.yellow("Type:")} ${this.type}${this.value === null
+			? ""
+			: ", " + chalk.yellow("Value: ") + this.value
+			} ${chalk.green("}")}`;
 	}
 }
 
 class Parser {
-	constructor(public code: string) {}
+	constructor(public code: string) { }
 
 	tokens: Token[][] = [];
 
@@ -155,7 +154,7 @@ class Parser {
 }
 
 class Interpreter {
-	constructor(public code: Token[][]) {}
+	constructor(public code: Token[][]) { }
 
 	memory: boolean[] = new Array(2 ** parseInt(values["memory"])).fill(false);
 
@@ -171,7 +170,7 @@ class Interpreter {
 		});
 	}
 
-	run() {
+	run(test: boolean = false): void | boolean[] {
 		for (let i = 0; i < this.code.length; i++) {
 			const exp: Token[] = this.code[i];
 			let expC = exp.slice();
@@ -262,11 +261,11 @@ class Interpreter {
 				}
 			}
 		}
-		this.log();
+		if (!test) this.log();
+		else return this.memory
 	}
 
 	log() {
-		console.log(this.memory.length)
 		this.memory.forEach((v, i) => {
 			if (i < parseInt(values["screen-start"])) return;
 			if (i % Math.sqrt(this.memory.length) === 0) {
@@ -296,4 +295,18 @@ function main(code: string) {
 
 	let interpreter = new Interpreter(parser.tokens);
 	interpreter.run();
+}
+
+export async function testFile(path: string): Promise<boolean[]> {
+	return new Promise((resolve, reject) => {
+		Bun.file(path)
+			.text()
+			.then((code) => {
+				let parser = new Parser(code);
+				let interpreter = new Interpreter(parser.tokens);
+				let res = interpreter.run(true)
+				if (res) resolve(res)
+				else reject("Invalid")
+			})
+	});
 }

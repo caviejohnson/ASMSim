@@ -17,16 +17,16 @@ To install dependencies, run:
 bun install
 ```
 
-To run the program, run:
+To run the program in dev mode, run:
 
 ```powershell
-bun run index.ts "path/to/your/file"
+bun dev "./path/to/file"
 ```
 
 To build, run:
 
 ```powershell
-bun build ./index.ts --outdit ./out
+bun prod
 ```
 
 ### Non-Dev Use
@@ -34,6 +34,10 @@ bun build ./index.ts --outdit ./out
 Don't.
 
 But if you really wanted to, as of now, you have to download the content of ./out manually and run it using bun. An API may come in the future.
+
+```powershell
+bun app "./path/to/file"
+```
 
 ## Docs
 
