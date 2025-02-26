@@ -33,7 +33,7 @@ if (!positionals[2]) {
 	console.log(chalk.redBright("Use --help for more information.\n"));
 	console.log(chalk.yellow("ASMSim:"));
 	console.log(chalk.green("Version: "), "0.0.1");
-	console.log(chalk.green("Licence: "), "MIT Licence\n");
+	console.log(chalk.green("Licence: "), "OpenLawyers Licence\n");
 } else {
 	Bun.file(positionals[2])
 		.text()
@@ -55,6 +55,7 @@ export async function testFile(path: string): Promise<boolean[]> {
 			.text()
 			.then((code) => {
 				let parser = new Parser(code);
+				parser.parse()
 				let interpreter = new Interpreter(parser.tokens);
 				let res = interpreter.run(true)
 				if (res) resolve(res)

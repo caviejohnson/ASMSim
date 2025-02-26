@@ -1,4 +1,4 @@
-import { testFile, Token, TokenType } from "../src/index.ts";
+import { testFile } from "../src/index.ts";
 import { expect, test } from "bun:test";
 
 test("Half-adder Test: ", async () => {
@@ -6,5 +6,5 @@ test("Half-adder Test: ", async () => {
     arr[0] = true;
     arr[1] = true;
     arr[3] = true;
-    expect(await testFile('./tests/half-adder.jsasm')).toBe(arr)
+    expect(await testFile('./tests/half-adder.jsasm')).toStrictEqual(arr)
 })
