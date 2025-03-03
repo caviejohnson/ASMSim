@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "prod": "bun build ./src/index.ts --outdir ./out --target bun",
+    "prod": "bun build ./src/index.ts --outdir ./out --target bun --minify",
     "dev": "bun --watch run ./src/index.ts $1 --log",
     "app": "bun run ./out/index.js $1"
   },

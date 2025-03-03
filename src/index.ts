@@ -11,10 +11,10 @@ export const { values, positionals } = parseArgs({
       type: "string",
       default: "6",
     },
-    // "screen-buffer": {
-    // 	type: "string",
-    // 	default: "6",
-    // },
+    "screen-buffer": {
+      type: "string",
+      default: "6",
+    },
     "screen-start": {
       type: "string",
       default: "0",
@@ -22,6 +22,14 @@ export const { values, positionals } = parseArgs({
     log: {
       type: "boolean",
       default: false,
+    },
+    web: {
+      type: "boolean",
+      default: true,
+    },
+    "web-port": {
+      type: "string",
+      default: "3000",
     },
   },
   strict: true,

@@ -3,6 +3,8 @@ import converter from "javascript-binary-converter";
 import { Token, TokenType, trustMeBro } from "./types";
 import { values } from ".";
 
+import webView from './web.html' with { type: "text" };
+
 export default class Interpreter {
   constructor(public code: Token[][]) {}
 
@@ -91,12 +93,21 @@ export default class Interpreter {
           }
           break;
         case "MOV":
-          if (typeof expC[1].value === "number" && args === 1) {
-            i = expC[1].value;
-            toRule = null;
+          if (
+            typeof expC[1].value === "number" &&
+            typeof expC[2].value === "number" &&
+            args === 2
+          ) {
+            if (expC[2].value) {
+              i = expC[1].value;
+              toRule = null;
+            }
           } else {
             console.error("Invalid use of MOV.");
           }
+          break;
+        default:
+          console.error("Expected an action, but did not get one. Parser is at fault for not throwing earlier. This may be caused by an action that has not been implemented correctly.")
           break;
       }
 
@@ -108,17 +119,44 @@ export default class Interpreter {
         }
       }
     }
-    if (!test) this.log();
+    if (!test) this.log(values.web);
     else return this.memory;
   }
 
-  log() {
-    this.memory.forEach((v, i) => {
-      if (i < parseInt(values["screen-start"])) return;
-      if (i % Math.sqrt(this.memory.length) === 0) {
-        console.write("\n");
-      }
-      console.write(v ? "⬜" : "⬛");
-    });
+  log(web: boolean) {
+    if (!web) {
+      this.memory.forEach((v, i) => {
+        if (i < parseInt(values["screen-start"])) return;
+        if (i % Math.sqrt(this.memory.length) === 0) {
+          console.write("\n");
+        }
+        console.write(v ? "⬜" : "⬛");
+      });
+    } else {
+      Bun.serve({
+        port: values["web-port"],
+        fetch: () => {
+          let text = `<div style="padding: 2px 8px 8px 2px;">Memory:`;
+
+          this.memory.forEach((v, i) => {
+            if (i < parseInt(values["screen-start"])) return;
+            if (i % Math.sqrt(this.memory.length) === 0) {
+              text += '</div><div class="row">';
+            }
+            text += v
+              ? '<div class="block black"></div>'
+              : '<div class="block white"></div>';
+          });
+
+          text += `</div>`;
+
+          const res = webView.replace("{{content}}", text)
+
+          return new Response(res, {
+            headers: { "Content-Type": "text/html" },
+          });
+        },
+      });
+    }
   }
 }
