@@ -4,6 +4,7 @@ import { Token, TokenType, trustMeBro } from "./types";
 import { values } from ".";
 
 import webView from './web.html' with { type: "text" };
+import chalk from "chalk";
 
 export default class Interpreter {
   constructor(public code: Token[][]) {}
@@ -133,7 +134,8 @@ export default class Interpreter {
         console.write(v ? "⬜" : "⬛");
       });
     } else {
-      Bun.serve({
+      const server = Bun.serve({
+        
         port: values["web-port"],
         fetch: () => {
           let text = `<div style="padding: 2px 8px 8px 2px;">Memory:`;
@@ -157,6 +159,8 @@ export default class Interpreter {
           });
         },
       });
+      
+      console.log(`Listening on ${chalk.underline(chalk.blueBright(server.url))}.`);
     }
   }
 }
