@@ -119,12 +119,12 @@ export default class Interpreter {
         }
       }
     }
-    if (!test) this.log(values.web);
+    if (!test) this.log(values.log);
     else return this.memory;
   }
 
-  log(web: boolean) {
-    if (!web) {
+  log(log: boolean) {
+    if (log) {
       this.memory.forEach((v, i) => {
         if (i < parseInt(values["screen-start"])) return;
         if (i % Math.sqrt(this.memory.length) === 0) {

@@ -23,9 +23,9 @@ export const { values, positionals } = parseArgs({
       type: "boolean",
       default: false,
     },
-    web: {
+    loh: {
       type: "boolean",
-      default: true,
+      default: false,
     },
     "web-port": {
       type: "string",
