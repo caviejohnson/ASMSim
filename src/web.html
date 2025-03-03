@@ -10,8 +10,8 @@
       }
 
       .block {
-        width: 4px;
-        height: 4px;
+        width: {{size}};
+        height: {{size}};
       }
 
       .black {
@@ -44,17 +44,18 @@
     <div class="dark" onclick="changeMode()">Enable Dark Mode</div>
     <script>
       "use strict";
-      let dark = window.localStorage.getItem("mode") === "dark";
+      let dark = !(window.localStorage.getItem("mode") === "dark");
+      changeMode()
 
       function changeMode() {
         if (dark) {
           document.getElementById("body").style.backgroundColor = "#eee";
           document.getElementById("body").style.color = "#000";
-          window.localStorage.setItem("mode", "dark");
+          window.localStorage.setItem("mode", "light");
         } else {
           document.getElementById("body").style.backgroundColor = "#333";
           document.getElementById("body").style.color = "#fff";
-          window.localStorage.setItem("mode", "light");
+          window.localStorage.setItem("mode", "dark");
         }
         dark = !dark;
       }

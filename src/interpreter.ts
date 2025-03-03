@@ -152,7 +152,7 @@ export default class Interpreter {
 
           text += `</div>`;
 
-          const res = webView.replace("{{content}}", text)
+          const res = webView.replace("{{content}}", text).replaceAll("{{size}}", values["pixel-size"] + "px")
 
           return new Response(res, {
             headers: { "Content-Type": "text/html" },

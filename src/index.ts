@@ -23,14 +23,14 @@ export const { values, positionals } = parseArgs({
       type: "boolean",
       default: false,
     },
-    loh: {
-      type: "boolean",
-      default: false,
-    },
     "web-port": {
       type: "string",
       default: "3000",
     },
+    "pixel-size": {
+      type: "string",
+      default: "10"
+    }
   },
   strict: true,
   allowPositionals: true,
