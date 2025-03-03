@@ -40,7 +40,7 @@ if (!positionals[2]) {
   console.error("A path for s file has to be given.");
   console.log(chalk.redBright("Use --help for more information.\n"));
   console.log(chalk.yellow("ASMSim:"));
-  console.log(chalk.green("Version: "), "0.0.1");
+  console.log(chalk.green("Version: "), "0.0.2 Alpha");
   console.log(chalk.green("Licence: "), "OpenLawyers Licence\n");
 } else {
   Bun.file(positionals[2])

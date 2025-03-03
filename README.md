@@ -1,5 +1,7 @@
 # ASMSim
 
+[![ASMSim](https://img.shields.io/badge/ASMSim-0.0.1%20Alpha-red.svg)](https://github.com/caviejohnson/ASMSim)
+
 Finally, a language that truly sucks ass™. A kind of assembly simulator that runs on hopes and dreams (a.k.a JavaScript).
 
 ### WARNING:
