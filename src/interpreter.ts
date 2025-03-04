@@ -120,6 +120,7 @@ export default class Interpreter {
         }
       }
     }
+    
     if (!test) this.log(values.log);
     else return this.memory;
   }

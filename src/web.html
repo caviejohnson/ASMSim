@@ -4,14 +4,26 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Interpreter Memory Display</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=arrow_drop_down,arrow_drop_up"
+    />
     <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      :root {
+        --pixel-size: {{size}};
+      }
+
       .row {
         display: flex;
       }
 
       .block {
-        width: {{size}};
-        height: {{size}};
+        width: var(--pixel-size);
+        height: var(--pixel-size);
       }
 
       .black {
@@ -22,7 +34,7 @@
         background-color: #fff;
       }
 
-      .dark {
+      #dark {
         user-select: none;
         background-color: #444;
         color: white;
@@ -37,15 +49,67 @@
       .dark:hover {
         background-color: #222;
       }
+
+      #size {
+        border-radius: 5px;
+        background-color: color-mix(in oklab, green 20%, transparent 80%);
+        margin-top: 5px;
+        display: flex;
+        height: 28.33px;
+        width: fit-content;
+      }
+
+      #size-change {
+        height: 28.33px;
+      }
+
+      #size-change div {
+        user-select: none;
+        cursor: pointer;
+        padding: 0 5px;
+        height: 50%;
+        display: flex;
+        align-items: center;
+      }
+
+      #size-change div:hover {
+        background-color: #0003;
+      }
+
+      #size-change div span {
+        font-size: 80% !important;
+      }
     </style>
   </head>
-  <body style="background-color: #eee; transition: all 200ms linear;" id="body">
+  <body style="background-color: #eee; transition: none" id="body">
     {{content}}
-    <div class="dark" onclick="changeMode()">Enable Dark Mode</div>
+    <div style="display: flex; gap: 5px">
+      <div id="dark" onclick="changeMode()">Enable Dark Mode</div>
+      <div id="size">
+        <div style="padding: 5px">Pixel Size:</div>
+        <div id="size-change">
+          <div style="border-top-right-radius: 5px" onclick="changeSize(1)">
+            <span class="material-symbols-outlined"> arrow_drop_up </span>
+          </div>
+          <div style="border-bottom-right-radius: 5px" onclick="changeSize(-1)">
+            <span class="material-symbols-outlined"> arrow_drop_down </span>
+          </div>
+        </div>
+      </div>
+    </div>
     <script>
       "use strict";
       let dark = !(window.localStorage.getItem("mode") === "dark");
-      changeMode()
+      changeMode();
+
+      const root = document.documentElement;
+      let size = parseInt(
+        getComputedStyle(root)
+          .getPropertyValue("--pixel-size")
+          .replace("px", "")
+      );
+      
+      document.getElementById("body").style.transition = "all 200ms linear"
 
       function changeMode() {
         if (dark) {
@@ -58,6 +122,11 @@
           window.localStorage.setItem("mode", "dark");
         }
         dark = !dark;
+      }
+
+      function changeSize(amount) {
+        size += amount;
+        root.style.setProperty("--pixel-size", size + "px");
       }
     </script>
   </body>

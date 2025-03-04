@@ -23,6 +23,10 @@ export const { values, positionals } = parseArgs({
       type: "boolean",
       default: false,
     },
+    "log-parser": {
+      type: "boolean",
+      default: false,
+    },
     "web-port": {
       type: "string",
       default: "3000",
@@ -51,7 +55,7 @@ if (!positionals[2]) {
 function main(code: string) {
   let parser = new Parser(code);
   parser.parse();
-  if (values.log) parser.log();
+  if (values["log-parser"]) parser.log();
 
   let interpreter = new Interpreter(parser.tokens);
   interpreter.run();

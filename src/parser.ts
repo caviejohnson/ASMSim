@@ -60,7 +60,7 @@ export default class Parser {
 
           if (trustMeBro<Rulers>(w))
             newTokens.push(new Token(TokenType.Ruler, w));
-          nextShouldBe = [TokenType.Pointer];
+          nextShouldBe = [TokenType.Pointer, TokenType.Value];
         } else {
           let type = TokenType.Value;
           let value = parseInt(w);
@@ -71,7 +71,7 @@ export default class Parser {
           }
 
           newTokens.push(new Token(type, value));
-          nextShouldBe = null;
+          nextShouldBe = [TokenType.Ruler];
         }
       });
 
