@@ -3,13 +3,19 @@ import converter from "javascript-binary-converter";
 import { Token, TokenType, trustMeBro } from "./types";
 import { values } from ".";
 
-import webView from './web.html' with { type: "text" };
+import webView from "./web.html" with { type: "text" };
 import chalk from "chalk";
 
 export default class Interpreter {
-  constructor(public code: Token[][]) {}
+  constructor(
+    public code: Token[][],
+    private mem: number = 2 ** parseInt(values["memory"]),
+    private l: boolean = values.log,
+    private ss: string = values["screen-start"],
+    private wp: string = values["web-port"]
+  ) {}
 
-  memory: boolean[] = new Array(2 ** parseInt(values["memory"])).fill(false);
+  memory: boolean[] = new Array(this.mem).fill(false);
 
   writeToMemory(startIndex: number, data: number) {
     let newData: number[] = [];
@@ -23,7 +29,12 @@ export default class Interpreter {
     });
   }
 
-  run(test: boolean = false): void | boolean[] {
+  run(
+    test: boolean = false,
+    ret: boolean = false
+  ): void | boolean[] | { mem: boolean[]; res: string } {
+    let retString: string = "";
+
     for (let i = 0; i < this.code.length; i++) {
       const exp: Token[] = this.code[i];
       let expC = exp.slice();
@@ -54,7 +65,8 @@ export default class Interpreter {
           ) {
             toRule = expC[1].value || expC[2].value;
           } else {
-            console.error("Invalid use of OR.");
+            if (ret) retString += "Invalid use of OR.\n";
+            else console.error("Invalid use of OR.");
           }
           break;
         case "AND":
@@ -65,14 +77,16 @@ export default class Interpreter {
           ) {
             toRule = expC[1].value && expC[2].value;
           } else {
-            console.error("Invalid use of AND.");
+            if (ret) retString += "Invalid use of AND.\n";
+            else console.error("Invalid use of AND.");
           }
           break;
         case "ARB":
           if (typeof expC[1].value === "number" && args === 1) {
             toRule = expC[1].value;
           } else {
-            console.error("Invalid use of ARB.");
+            if (ret) retString += "Invalid use of ARB.\n";
+            else console.error("Invalid use of ARB.");
           }
           break;
         case "XOR":
@@ -83,14 +97,16 @@ export default class Interpreter {
           ) {
             toRule = expC[1].value ^ expC[2].value;
           } else {
-            console.error("Invalid use of XOR.");
+            if (ret) retString += "Invalid use of XOR.\n";
+            else console.error("Invalid use of XOR.");
           }
           break;
         case "NOT":
           if (typeof expC[1].value === "number" && args === 1) {
             toRule = !expC[1].value;
           } else {
-            console.error("Invalid use of NOT.");
+            if (ret) retString += "Invalid use of NOT.\n";
+            else console.error("Invalid use of NOT.");
           }
           break;
         case "MOV":
@@ -104,11 +120,18 @@ export default class Interpreter {
               toRule = null;
             }
           } else {
-            console.error("Invalid use of MOV.");
+            if (ret) retString += "Invalid use of MOV.\n";
+            else console.error("Invalid use of MOV.");
           }
           break;
         default:
-          console.error("Expected an action, but did not get one. Parser is at fault for not throwing earlier. This may be caused by an action that has not been implemented correctly.")
+          if (ret)
+            retString +=
+              "Expected an action, but did not get one. Parser is at fault for not throwing earlier. This may be caused by an action that has not been implemented correctly.N";
+          else
+            console.error(
+              "Expected an action, but did not get one. Parser is at fault for not throwing earlier. This may be caused by an action that has not been implemented correctly."
+            );
           break;
       }
 
@@ -120,15 +143,16 @@ export default class Interpreter {
         }
       }
     }
-    
-    if (!test) this.log(values.log);
+
+    if (ret) return { mem: this.memory, res: retString };
+    else if (!test) this.log(this.l);
     else return this.memory;
   }
 
   log(log: boolean) {
     if (log) {
       this.memory.forEach((v, i) => {
-        if (i < parseInt(values["screen-start"])) return;
+        if (i < parseInt(this.ss)) return;
         if (i % Math.sqrt(this.memory.length) === 0) {
           console.write("\n");
         }
@@ -136,13 +160,12 @@ export default class Interpreter {
       });
     } else {
       const server = Bun.serve({
-        
-        port: values["web-port"],
+        port: this.wp,
         fetch: () => {
           let text = `<div style="padding: 2px 8px 8px 2px;">Memory:`;
 
           this.memory.forEach((v, i) => {
-            if (i < parseInt(values["screen-start"])) return;
+            if (i < parseInt(this.ss)) return;
             if (i % Math.sqrt(this.memory.length) === 0) {
               text += '</div><div class="row">';
             }
@@ -153,15 +176,19 @@ export default class Interpreter {
 
           text += `</div>`;
 
-          const res = webView.replace("{{content}}", text).replaceAll("{{size}}", values["pixel-size"] + "px")
+          const res = webView
+            .replace("{{content}}", text)
+            .replaceAll("{{size}}", values["pixel-size"] + "px");
 
           return new Response(res, {
             headers: { "Content-Type": "text/html" },
           });
         },
       });
-      
-      console.log(`Listening on ${chalk.underline(chalk.blueBright(server.url))}.`);
+
+      console.log(
+        `Listening on ${chalk.underline(chalk.blueBright(server.url))}.`
+      );
     }
   }
 }

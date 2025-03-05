@@ -6,6 +6,8 @@
   "scripts": {
     "prod": "bun build ./src/index.ts --outdir ./out --target bun --minify",
     "dev": "bun --watch run ./src/index.ts $1 --log-parser",
+    "server-dev": "bun --watch run ./src/server.ts",
+    "server-app": "bun run ./src/server.ts",
     "app": "bun run ./out/index.js $1"
   },
   "devDependencies": {

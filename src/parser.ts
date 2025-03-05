@@ -14,7 +14,8 @@ export default class Parser {
 
   tokens: Token[][] = [];
 
-  parse() {
+  parse(ret: boolean = false) {
+    let retString: string = "";
     const exps = this.code.split("\n");
 
     exps.filter((v: string) => !v.startsWith(";"));
@@ -34,14 +35,19 @@ export default class Parser {
 
         if (i === 0) {
           if (!actions.includes(w.toUpperCase()))
-            throw Error(`First word should be an action, ${w} is not.`);
+            if (ret)
+              retString += `First word should be an action, ${w} is not.\n`;
+            else throw Error(`First word should be an action, ${w} is not.`);
 
           if (
             !(nextShouldBe === null || nextShouldBe?.includes(TokenType.Action))
           ) {
-            console.log(
-              chalk.red(`Did not expect an action, expected ${nextShouldBe}`)
-            );
+            if (ret)
+              retString += `Did not expect an action, expected ${nextShouldBe}\n`;
+            else
+              console.log(
+                chalk.red(`Did not expect an action, expected ${nextShouldBe}`)
+              );
           }
 
           let W = w.toUpperCase();
@@ -53,9 +59,12 @@ export default class Parser {
           if (
             !(nextShouldBe === null || nextShouldBe?.includes(TokenType.Ruler))
           ) {
-            console.log(
-              chalk.red(`Did not expect a ruler, expected ${nextShouldBe}`)
-            );
+            if (ret)
+              retString += `Did not expect a ruler, expected ${nextShouldBe}\n`;
+            else
+              console.log(
+                chalk.red(`Did not expect a ruler, expected ${nextShouldBe}`)
+              );
           }
 
           if (trustMeBro<Rulers>(w))
@@ -77,6 +86,8 @@ export default class Parser {
 
       this.tokens.push(newTokens);
     });
+
+    if (ret) return retString;
   }
 
   log() {
