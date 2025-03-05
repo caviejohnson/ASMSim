@@ -87,6 +87,9 @@
       <div id="dark" onclick="changeMode()">Enable Dark Mode</div>
       <div id="size">
         <div style="padding: 5px">Pixel Size:</div>
+        <div style="display: flex; align-items: center; padding-right: 5px;">
+          <span id="size-amount"></span>
+        </div>
         <div id="size-change">
           <div style="border-top-right-radius: 5px" onclick="changeSize(1)">
             <span class="material-symbols-outlined"> arrow_drop_up </span>
@@ -99,6 +102,8 @@
     </div>
     <script>
       "use strict";
+      document.body.style.zoom = 3.5;
+
       let dark = !(window.localStorage.getItem("mode") === "dark");
       changeMode();
 
@@ -108,8 +113,9 @@
           .getPropertyValue("--pixel-size")
           .replace("px", "")
       );
-      
-      document.getElementById("body").style.transition = "all 200ms linear"
+      document.getElementById("size-amount").innerHTML = `${size}<span style="padding-left:1px; font-size: 10px; font-weight: light; opacity: 0.5;">px</span>`;
+
+      document.getElementById("body").style.transition = "all 200ms linear";
 
       function changeMode() {
         if (dark) {
@@ -126,6 +132,8 @@
 
       function changeSize(amount) {
         size += amount;
+        document.getElementById("size-amount").innerHTML = `${size}<span style="padding-left:1px; font-size: 10px; font-weight: light; opacity: 0.5;">px</span>`;;
+
         root.style.setProperty("--pixel-size", size + "px");
       }
     </script>
